@@ -342,7 +342,7 @@ namespace HDFCommAgent.NET
 
         public AxHDFCommAgent(IntPtr hWndParent)
         {
-            string clsid = System.Environment.Is64BitProcess ? "{0f3a0d96-1432-4d05-a1ac-220e202bb52c}" : "{2a7b5bef-49ee-4219-9833-db04d07876cf}";
+            string clsid = System.Environment.Is64BitProcess ? "{e3f27f03-f448-4afc-9beb-09ab58731d85}" : "{2a7b5bef-49ee-4219-9833-db04d07876cf}";
             if (!bInitialized)
             {
                 if (AtlAxWinInit())

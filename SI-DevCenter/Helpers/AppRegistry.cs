@@ -1,4 +1,5 @@
-﻿namespace SI_DevCenter.Helpers
+﻿#pragma warning disable MA0011
+namespace SI_DevCenter.Helpers
 {
     public class AppRegistry : IAppRegistry
     {

@@ -1,0 +1,47 @@
+﻿<Window
+    x:Class="SI_DevCenter.Views.KeySettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SI_DevCenter.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="KeySettings"
+    Width="Auto"
+    Height="Auto"
+    SizeToContent="WidthAndHeight"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Width="80" Text="UserID" />
+            <TextBox Name="UserID" Width="220" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="1"
+            Margin="0,10,0,0"
+            Orientation="Horizontal">
+            <TextBlock Width="80" Text="Password" />
+            <PasswordBox Name="Password" Width="220" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            Orientation="Horizontal">
+            <TextBlock Width="80" Text="CertPassword" />
+            <PasswordBox Name="CertPassword" Width="220" />
+        </StackPanel>
+        <Button
+            Grid.Row="3"
+            Width="60"
+            Height="26"
+            Margin="0,10,0,0"
+            Click="btnOkClicked"
+            Content="확인" />
+    </Grid>
+</Window>
