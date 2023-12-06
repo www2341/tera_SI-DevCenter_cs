@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SI_DevCenter.Business;
 using SI_DevCenter.Helpers;
 using SI_DevCenter.ViewModels;
-using System.Text;
+using SI_DevCenter.Views;
 using System.Windows;
 
 namespace SI_DevCenter
@@ -15,7 +15,6 @@ namespace SI_DevCenter
     {
         public App()
         {
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
 
@@ -29,28 +28,10 @@ namespace SI_DevCenter
 
             Startup += (s, e) =>
             {
-                var View = new MainView();
-                View.DataContext = Ioc.Default.GetService<MainViewModel>();
-
-                IAppRegistry appRegistry = Ioc.Default.GetRequiredService<IAppRegistry>();
-                int Left = appRegistry.GetValue("InitData", "Left", 0);
-                int Top = appRegistry.GetValue("InitData", "Top", 0);
-                int Width = appRegistry.GetValue("InitData", "Width", 0);
-                int Height = appRegistry.GetValue("InitData", "Height", 0);
-
-                if (Left != 0) View.Left = Left;
-                if (Top != 0) View.Top = Top;
-                if (Width != 0) View.Width = Width;
-                if (Height != 0) View.Height = Height;
-
-                View.Closed += (s, e) =>
+                new MainView()
                 {
-                    appRegistry.SetValue("InitData", "Left", (int)View.Left);
-                    appRegistry.SetValue("InitData", "Top", (int)View.Top);
-                    appRegistry.SetValue("InitData", "Width", (int)View.Width);
-                    appRegistry.SetValue("InitData", "Height", (int)View.Height);
-                };
-                View.Show();
+                    DataContext = Ioc.Default.GetService<MainViewModel>()
+                }.Show();
             };
         }
     }

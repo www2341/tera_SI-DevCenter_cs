@@ -1,7 +1,7 @@
 ﻿#pragma warning disable MA0011
 namespace SI_DevCenter.Helpers
 {
-    public class AppRegistry : IAppRegistry
+    internal class AppRegistry : IAppRegistry
     {
         private static readonly Microsoft.Win32.RegistryKey CurrentUser = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.CurrentUser, Microsoft.Win32.RegistryView.Default);
         private readonly string? CorpAssemKey;

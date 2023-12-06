@@ -8,12 +8,12 @@
     Title="KeySettings"
     Width="Auto"
     Height="Auto"
+    ResizeMode="NoResize"
     SizeToContent="WidthAndHeight"
-    WindowStartupLocation="CenterScreen"
+    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -29,19 +29,12 @@
             <TextBlock Width="80" Text="Password" />
             <PasswordBox Name="Password" Width="220" />
         </StackPanel>
-        <StackPanel
-            Grid.Row="2"
-            Margin="0,10,0,0"
-            Orientation="Horizontal">
-            <TextBlock Width="80" Text="CertPassword" />
-            <PasswordBox Name="CertPassword" Width="220" />
-        </StackPanel>
         <Button
             Grid.Row="3"
             Width="60"
             Height="26"
             Margin="0,10,0,0"
-            Click="btnOkClicked"
+            Click="BtnOkClicked"
             Content="확인" />
     </Grid>
 </Window>

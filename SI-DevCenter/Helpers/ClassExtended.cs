@@ -1,17 +1,17 @@
 ﻿using System.Windows.Controls;
 
-namespace KOAStudio.Core.Helpers
+namespace SI_DevCenter.Helpers
 {
-    public static class ClassExtended
+    internal static class ClassExtended
     {
 #if !NET
         public static string[] Split(this string _this, char separator, StringSplitOptions options)
         {
-            return _this.Split(new char[] { separator }, options);
+            return _this.Split([separator], options);
         }
         public static string[] Split(this string _this, string separator, StringSplitOptions options)
         {
-            return _this.Split(new string[] { separator }, options);
+            return _this.Split([separator], options);
         }
 #endif
         public static TreeViewItem? ContainerFromItemRecursive(this ItemContainerGenerator root, object item)

@@ -1,6 +1,7 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
-namespace SI_DevCenter
+namespace SI_DevCenter.Views
 {
     /// <summary>
     /// Interaction logic for MainView.xaml
@@ -10,6 +11,11 @@ namespace SI_DevCenter
         public MainView()
         {
             InitializeComponent();
+            MouseDown += (sender, e) =>
+            {
+                if (e.ChangedButton == MouseButton.Left)
+                    DragMove();
+            };
         }
     }
 }

@@ -1,0 +1,212 @@
+﻿<UserControl
+    x:Class="SI.Component.Components.FutureOrderComponent"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:StockDevControl.Controls;assembly=StockDevControl"
+    xmlns:Converters="clr-namespace:StockDevControl.Converters;assembly=StockDevControl"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:SI.Component.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:FutureOrderComponent}"
+    d:DesignHeight="450"
+    d:DesignWidth="600"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Converters:StokItemInfoPriceConverter x:Key="StokItemInfoPriceConverter" />
+        <Converters:StokItemInfoPriceBrushConverter x:Key="StokItemInfoPriceBrushConverter" />
+        <Converters:OrderTypeBrushConverter x:Key="OrderTypeBrushConverter" />
+        <Converters:ValueCompareToBrushConverter x:Key="ValueCompareToBrushConverter" />
+    </UserControl.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Margin="0,0,0,10"
+            Visibility="{Binding TitleBarVisibility}">
+            <TextBlock FontSize="22" Text="{Binding Title}" />
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="370" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Controls:FutureOrderControl x:Name="orderControl" DataContext="{Binding OrderModel}" />
+            </Grid>
+            <Controls:BindableAvalonEditor
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                Padding="0,3,0,0"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                FontFamily="Consolas"
+                IsReadOnly="True"
+                SyntaxHighlighting="C#"
+                Text="{Binding CodeText}" />
+        </Grid>
+        <TabControl
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="잔고" IsSelected="True">
+                <DataGrid
+                    d:ItemsSource="{d:SampleData}"
+                    AutoGenerateColumns="False"
+                    CanUserSortColumns="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding JangoItems}"
+                    SelectedItem="{Binding SelectedJangoItem}"
+                    SelectionMode="Single">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <EventSetter Event="MouseDoubleClick" Handler="잔고Row_DoubleClick" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding 실시간요청Command}" Header="현재가 실시간 요청" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="220"
+                            Binding="{Binding 종목정보.종목명}"
+                            Header="종목명" />
+                        <DataGridTemplateColumn Width="60" Header="포지션">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Foreground="{Binding 매매구분, Converter={StaticResource OrderTypeBrushConverter}}"
+                                        Text="{Binding 매매구분}"
+                                        TextAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+                            Width="60"
+                            Binding="{Binding 보유수량}"
+                            Header="보유" />
+                        <DataGridTextColumn
+                            Width="100*"
+                            Binding="{Binding 평균단가, StringFormat=N}"
+                            Header="매입가" />
+                        <DataGridTextColumn Width="100*" Header="현재가">
+                            <DataGridTextColumn.Binding>
+                                <MultiBinding Converter="{StaticResource StokItemInfoPriceConverter}">
+                                    <Binding Path="종목정보.현재가" />
+                                    <Binding Path="종목정보" />
+                                </MultiBinding>
+                            </DataGridTextColumn.Binding>
+                        </DataGridTextColumn>
+                        <!--<DataGridTemplateColumn Width="100*" Header="현재가">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding Converter="{StaticResource StokItemInfoPriceConverter}">
+                                                <Binding Path="종목정보.현재가" />
+                                                <Binding Path="종목정보" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                        <TextBlock.Foreground>
+                                            <MultiBinding Converter="{StaticResource StokItemInfoPriceBrushConverter}">
+                                                <Binding Path="종목정보.현재가" />
+                                                <Binding Path="종목정보" />
+                                            </MultiBinding>
+                                        </TextBlock.Foreground>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>-->
+                        <DataGridTemplateColumn Width="120*" Header="손익금">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Foreground="{Binding 손익, Converter={StaticResource ValueCompareToBrushConverter}}" Text="{Binding 손익, StringFormat='#,##0.##'}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+                            Width="60"
+                            Binding="{Binding 종목정보.통화}"
+                            Header="통화" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="미체결">
+                <DataGrid
+                    d:ItemsSource="{d:SampleData}"
+                    AutoGenerateColumns="False"
+                    CanUserSortColumns="False"
+                    IsReadOnly="True"
+                    ItemsSource="{Binding MicheItems}"
+                    SelectedItem="{Binding SelectedMicheItem}"
+                    SelectionMode="Single">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridRow">
+                            <EventSetter Event="MouseDoubleClick" Handler="미체결Row_DoubleClick" />
+                        </Style>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="100"
+                            Binding="{Binding 주문번호}"
+                            Header="주문번호" />
+                        <DataGridTextColumn
+                            Width="100"
+                            Binding="{Binding 원주문번호}"
+                            Header="원주문번호" />
+                        <DataGridTextColumn
+                            Width="220"
+                            Binding="{Binding 종목정보.종목명}"
+                            Header="종목명" />
+                        <DataGridTemplateColumn Width="60" Header="구분">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        Foreground="{Binding 매매구분, Converter={StaticResource OrderTypeBrushConverter}}"
+                                        Text="{Binding 매매구분}"
+                                        TextAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn
+                            Width="60"
+                            Binding="{Binding 주문수량}"
+                            Header="수량" />
+                        <DataGridTextColumn
+                            Width="80*"
+                            Binding="{Binding 주문가격}"
+                            Header="주문가격" />
+                        <DataGridTextColumn
+                            Width="80*"
+                            Binding="{Binding STOP가격}"
+                            Header="STOP가격" />
+                        <DataGridTextColumn
+                            Width="60"
+                            Binding="{Binding 종목정보.통화}"
+                            Header="통화" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+        <Button
+            Grid.Row="2"
+            Width="60"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Command="{Binding 조회Command}"
+            CommandParameter="계좌요청"
+            Content="조회" />
+    </Grid>
+    <UserControl.Background>
+        <Binding
+            ElementName="orderControl"
+            Mode="OneWay"
+            Path="Background" />
+    </UserControl.Background>
+</UserControl>
