@@ -14,7 +14,7 @@ namespace SI_DevCenter.Repositories
 
         public static TRData? GetTRData(string Code)
         {
-            if (_codeToTrData.TryGetValue(Code, out TRData trData))
+            if (_codeToTrData.TryGetValue(Code, out var trData))
             {
                 return trData;
             }
@@ -23,7 +23,7 @@ namespace SI_DevCenter.Repositories
 
         public static TRData? GetTRData(int realtype)
         {
-            if (_realtypeToTrData.TryGetValue(realtype, out TRData trData))
+            if (_realtypeToTrData.TryGetValue(realtype, out var trData))
             {
                 return trData;
             }
@@ -33,7 +33,8 @@ namespace SI_DevCenter.Repositories
         public static void ParsingTRData(ref TRData trData, string ansiText)
         {
             // [TRINFO]
-            var lines = ansiText.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries);
+            char[] separator = ['\r', '\n'];
+            var lines = ansiText.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
             TRSECTION trSection = TRSECTION.NONE;
             string key = string.Empty;
@@ -136,7 +137,8 @@ namespace SI_DevCenter.Repositories
             {
                 // ex DataHeader=5; 2:해외주문, 3:해외조회, 4:국내주문, 5:국내조회
                 // out: (DataHeader, 5)
-                var key_value = text.Split(bFullValue ? ['=',] : ['=', ';'], StringSplitOptions.RemoveEmptyEntries);
+                char[] separator = bFullValue ? ['=',] : ['=', ';'];
+                var key_value = text.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 if (key_value.Length < 2) return false;
                 key = key_value[0].Trim();
                 value = key_value[1].Trim();

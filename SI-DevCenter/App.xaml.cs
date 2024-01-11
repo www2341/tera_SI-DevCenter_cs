@@ -4,6 +4,7 @@ using SI_DevCenter.Business;
 using SI_DevCenter.Helpers;
 using SI_DevCenter.ViewModels;
 using SI_DevCenter.Views;
+using System.Text;
 using System.Windows;
 
 namespace SI_DevCenter
@@ -15,6 +16,7 @@ namespace SI_DevCenter
     {
         public App()
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
 

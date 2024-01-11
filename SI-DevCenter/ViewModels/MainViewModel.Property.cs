@@ -247,17 +247,18 @@ internal partial class MainViewModel
                 int ret = (int)result!;
                 if (ret == 0)
                 {
-                    StatusText = "통신관리자 실행 성공";
+                    SetStatusText("통신관리자 실행 성공");
                     _loginState = LoginState.CONNECTED;
                 }
                 else
-                    StatusText = $"통신관리자 실행 오류: {ret}";
+                    SetStatusText($"통신관리자 실행 오류: {ret}");
+
                 OutputLog(LogKind.LOGS, StatusText);
             }
             else if (methodInfo.Name.Equals("CommTerminate"))
             {
                 _loginState = LoginState.CREATED;
-                StatusText = "통신관리자 종료";
+                SetStatusText("통신관리자 종료");
                 OutputLog(LogKind.LOGS, StatusText);
             }
             else if (methodInfo.Name.Equals("CommLogin"))
@@ -265,12 +266,12 @@ internal partial class MainViewModel
                 int ret = (int)result!;
                 if (ret > 0)
                 {
-                    StatusText = "로그인 성공";
+                    SetStatusText("로그인 성공");
                     _loginState = LoginState.LOGINED;
                 }
                 else
                 {
-                    StatusText = $"로그인 실패: {ret}";
+                    SetStatusText($"로그인 실패: {ret}");
                 }
                 OutputLog(LogKind.LOGS, StatusText);
             }
@@ -279,12 +280,12 @@ internal partial class MainViewModel
                 int ret = (int)result!;
                 if (ret == 0)
                 {
-                    StatusText = "로그아웃 성공";
+                    SetStatusText("로그아웃 성공");
                     _loginState = LoginState.CONNECTED;
                 }
                 else
                 {
-                    StatusText = $"로그아웃 실패: {ret}";
+                    SetStatusText($"로그아웃 실패: {ret}");
                 }
                 OutputLog(LogKind.LOGS, StatusText);
             }
@@ -418,10 +419,10 @@ internal partial class MainViewModel
         int param_index = 0;
         foreach (var param in parameters)
         {
-            string value = _appRegistry.GetValue(methodInfo.Name, param.Name, string.Empty);
+            string value = _appRegistry.GetValue(methodInfo.Name, param.Name!, string.Empty);
             bool IsString = param.ParameterType == typeof(string);
             param_index++;
-            PropertyData.PropertyItems.Add(new(param_index, param.Name, value, param.ParameterType.ToString(), IsString ? StockDevControl.Models.PropertyItem.VALUE_TYPE.VALUE_STRING : StockDevControl.Models.PropertyItem.VALUE_TYPE.VALUE_LONG));
+            PropertyData.PropertyItems.Add(new(param_index, param.Name!, value, param.ParameterType.ToString(), IsString ? StockDevControl.Models.PropertyItem.VALUE_TYPE.VALUE_STRING : StockDevControl.Models.PropertyItem.VALUE_TYPE.VALUE_LONG));
         }
     }
 

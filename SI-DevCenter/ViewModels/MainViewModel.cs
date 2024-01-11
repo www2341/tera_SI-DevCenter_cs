@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SI_DevCenter.Helpers;
 using SI_DevCenter.Models;
 using SI_DevCenter.Repositories;
+using SI_DevCenter.Views;
 using StockDevControl.Models;
 using StockDevControl.StockModels;
 using System.Collections.ObjectModel;
@@ -16,8 +17,9 @@ namespace SI_DevCenter.ViewModels;
 
 internal partial class MainViewModel : ObservableObject
 {
-    public static readonly string AppVersion = "v1.0.0";
-    public static readonly string AppName = "SI-DevCenter-" + AppVersion;
+    private readonly string _baseTitle;
+    private readonly string _appVersion;
+    private IList<GithubTagInfo>? _releaseTags;
 
     private static readonly Encoding _krEncoder = Encoding.GetEncoding("EUC-KR");
     private readonly Window _mainWindow;
@@ -71,7 +73,11 @@ internal partial class MainViewModel : ObservableObject
         };
 
         // 바인딩 데이터 설정
-        _title = AppName + (Environment.Is64BitProcess ? "-64비트" : "-32비트");
+        var assemblyName = System.Windows.Application.ResourceAssembly.GetName();
+        _appVersion = $"{assemblyName.Version!.Major}.{assemblyName.Version.Minor}";
+        _baseTitle = $"{assemblyName.Name} v{_appVersion} - {(Environment.Is64BitProcess ? "64비트" : "32비트")}";
+
+        _title = _baseTitle;
         _statusText = "Ready";
         _ResultPath = string.Empty;
         _ResultText = string.Empty;
@@ -124,17 +130,17 @@ internal partial class MainViewModel : ObservableObject
         bool bOcxInstalled = false;
         string ocxPath = OcxPathHelper.GetOcxPathFromCLSID("{2A7B5BEF-49EE-4219-9833-DB04D07876CF}");
 
-        string myPath = Assembly.GetEntryAssembly().Location;
-        string myFolder = Path.GetDirectoryName(myPath);
+        string myPath = Assembly.GetEntryAssembly()!.Location;
+        string myFolder = Path.GetDirectoryName(myPath)!;
 
         if (string.IsNullOrEmpty(ocxPath))
         {
-            StatusText = "Api가 설치되어 있지 않습니다.";
+            OutputLog(LogKind.LOGS, "Api가 설치되어 있지 않습니다.");
         }
         else
         {
             string ocxPath_32 = string.Empty;
-            string ocx_folder = Path.GetDirectoryName(ocxPath);
+            string ocx_folder = Path.GetDirectoryName(ocxPath)!;
             bOcxInstalled = true;
 
             // 64비트인 경우 32비트 경로 추가 가져오기
@@ -145,7 +151,7 @@ internal partial class MainViewModel : ObservableObject
                 ocxPath_32 = OcxPathHelper.GetOcxPathFromWOW6432NodeCLSID("{2A7B5BEF-49EE-4219-9833-DB04D07876CF}");
                 if (!string.IsNullOrEmpty(ocxPath_32))
                 {
-                    string folder_32 = Path.GetDirectoryName(ocxPath_32);
+                    string folder_32 = Path.GetDirectoryName(ocxPath_32)!;
                     // 64비트와 32비트 경로가 다르다면 
                     if (!folder_64.Equals(folder_32, StringComparison.OrdinalIgnoreCase))
                     {
@@ -172,7 +178,7 @@ internal partial class MainViewModel : ObservableObject
                     else
                     {
                         bOcxInstalled = false;
-                        StatusText = "32bit Api가 설치되어 있지 않습니다.";
+                        OutputLog(LogKind.LOGS, "32bit Api가 설치되어 있지 않습니다.");
                     }
                 }
             }
@@ -191,7 +197,7 @@ internal partial class MainViewModel : ObservableObject
                 }
             }
 
-            _apiFolderPath = Path.GetDirectoryName(ocxPath_32);
+            _apiFolderPath = Path.GetDirectoryName(ocxPath_32)!;
 
             Environment.CurrentDirectory = _apiFolderPath;
             HDFTrManager.ApiFolderPath = _apiFolderPath;
@@ -235,6 +241,7 @@ internal partial class MainViewModel : ObservableObject
             SelectedChartRound = GetChartRoundFromString(_appRegistry.GetValue(toolKey, "ChartRound", "일")),
         };
 
+        _ = CheckVersionAsync();
     }
     async void ReqisterOCX(string path)
     {
@@ -246,7 +253,7 @@ internal partial class MainViewModel : ObservableObject
         int result = await task.ConfigureAwait(true);
         if (result < 0)
         {
-            StatusText = $"Api를 설치할 수 없습니다: {path}";
+            OutputLog(LogKind.LOGS, $"Api를 설치할 수 없습니다: {path}");
         }
     }
 
@@ -266,10 +273,50 @@ internal partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string _statusText;
 
+    [ObservableProperty]
+    private string _statusUrl = string.Empty;
+
     [RelayCommand]
     private void MenuExit()
     {
         Application.Current.Shutdown();
+    }
+
+    private async Task CheckVersionAsync()
+    {
+        // 깃헙에서 최신 버전 정보 가져오기
+
+        _releaseTags = await GithubVersion.GetRepoTagInfos("teranum", "SI-DevCenter").ConfigureAwait(true);
+        if (_releaseTags != null && _releaseTags.Count > 0)
+        {
+            var lastTag = _releaseTags[0];
+            if (string.Equals(lastTag.tag_name, _appVersion))
+            {
+                StatusText = "최신 버전입니다.";
+            }
+            else
+            {
+                StatusUrl = lastTag.html_url;
+                StatusText = $"새로운 버전({lastTag.tag_name})이 있습니다.";
+            }
+        }
+    }
+
+    [RelayCommand]
+    void Menu_Version()
+    {
+        // 버젼 정보
+        if (_releaseTags != null && _releaseTags.Count != 0)
+        {
+            var versionView = new VersionView(_releaseTags);
+            versionView.ShowDialog();
+        }
+    }
+
+    void SetStatusText(string text)
+    {
+        StatusText = text;
+        StatusUrl = string.Empty;
     }
 }
 

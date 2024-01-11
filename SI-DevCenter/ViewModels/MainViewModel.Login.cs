@@ -38,7 +38,7 @@ internal partial class MainViewModel
         if (_axHDFCommAgent.AccountInfos[0].계좌명.IndexOf("모의_") == 0) _serverType = SERVER_TYPE.Simulation;
         else _serverType = SERVER_TYPE.Real;
 
-        Title = AppName + (Environment.Is64BitProcess ? "-64비트" : "-32비트")
+        Title = _baseTitle
             + (_serverType == SERVER_TYPE.Simulation ? "(모의서버)" : _serverType == SERVER_TYPE.Real ? "(실서버)" : string.Empty);
     }
 
@@ -65,7 +65,7 @@ internal partial class MainViewModel
             string oldValue = GetPrivateProfileString("STARTER", "Simulation", string.Empty, comms_path);
             if (oldValue.Length != 1 || !(oldValue[0] == '0' || oldValue[0] == '1'))
             {
-                StatusText = "시스템 파일 데이터가 정확치 않습니다.";
+                SetStatusText("시스템 파일 데이터가 정확치 않습니다.");
                 return;
             }
             bool oldType_isRealServer = oldValue[0] == '0';
@@ -74,7 +74,7 @@ internal partial class MainViewModel
             {
                 if (!WritePrivateProfileStringW("STARTER", "Simulation", isRealServer ? "0" : "1", comms_path))
                 {
-                    StatusText = "시스템 파일을 변경할수 없습니다.";
+                    SetStatusText("시스템 파일을 변경할수 없습니다.");
                     return;
                 }
             }
@@ -84,11 +84,11 @@ internal partial class MainViewModel
 
             if (ret == 0)
             {
-                StatusText = "통신관리자 실행 성공";
+                SetStatusText("통신관리자 실행 성공");
                 _loginState = LoginState.CONNECTED;
             }
             else
-                StatusText = $"통신관리자 실행 오류: {ret}";
+                SetStatusText($"통신관리자 실행 오류: {ret}");
             OutputLog(LogKind.LOGS, StatusText);
         }
 
@@ -117,12 +117,12 @@ internal partial class MainViewModel
                 int ret = _axHDFCommAgent.CommLogin(UserID, Password, string.Empty);
                 if (ret > 0)
                 {
-                    StatusText = "로그인 성공";
+                    SetStatusText("로그인 성공");
                     _loginState = LoginState.LOGINED;
                 }
                 else
                 {
-                    StatusText = $"로그인 실패: {ret}";
+                    SetStatusText($"로그인 실패: {ret}");
                 }
                 OutputLog(LogKind.LOGS, StatusText);
 
@@ -156,7 +156,7 @@ internal partial class MainViewModel
             else
             {
                 OutputLog(LogKind.LOGS, "로그인 취소");
-                StatusText = "로그인 취소";
+                SetStatusText("로그인 취소");
             }
         }
 
@@ -180,7 +180,7 @@ internal partial class MainViewModel
         _loginState = LoginState.CREATED;
         _requred_serverType = SERVER_TYPE.UnKwnown;
 
-        StatusText = "통신관리자 종료";
+        SetStatusText("통신관리자 종료");
         OutputLog(LogKind.LOGS, StatusText);
 
         MenuSimulationLoginCommand.NotifyCanExecuteChanged();

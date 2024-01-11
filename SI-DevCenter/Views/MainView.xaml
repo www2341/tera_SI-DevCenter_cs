@@ -53,6 +53,9 @@
                     </Style>
                 </MenuItem.ItemContainerStyle>
             </MenuItem>
+            <MenuItem Header="About">
+                <MenuItem Command="{Binding Menu_VersionCommand}" Header="버젼정보" />
+            </MenuItem>
         </Menu>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -211,6 +214,17 @@
             VerticalAlignment="Bottom"
             Background="#FF0C4B73">
             <TextBlock Foreground="White" Text="{Binding StatusText}" />
+            <TextBlock Margin="10,0,0,0">
+                <Hyperlink
+                    Command="{Binding Hyperlink_RequestNavigateCommand}"
+                    CommandParameter="{Binding NavigateUri, RelativeSource={RelativeSource Self}}"
+                    Foreground="White"
+                    NavigateUri="{Binding StatusUrl}">
+                    <Hyperlink.Inlines>
+                        <Run Text="{Binding StatusUrl}" />
+                    </Hyperlink.Inlines>
+                </Hyperlink>
+            </TextBlock>
         </StatusBar>
     </Grid>
 </Window>
