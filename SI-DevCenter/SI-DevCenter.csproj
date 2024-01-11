@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<LangVersion>Default</LangVersion>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net48</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<RootNamespace>SI_DevCenter</RootNamespace>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -11,11 +10,13 @@
 		<ApplicationIcon>app.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64</Platforms>
-		<NoWarn>$(NoWarn);MA0048</NoWarn>
+		<NoWarn>$(NoWarn);MA0048;IDE1006</NoWarn>
+		<Version>1.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="HDFCommAgent.NET" Version="1.0.0" />
+		<PackageReference Include="System.Text.Encoding.CodePages" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
